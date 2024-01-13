@@ -1,93 +1,170 @@
-## API Spec & Example Usage
+# Plate Management API
+
+This API allows scientists to manage experimental assay plates, including creating plates, updating wells, and retrieving plate information. It's built using Python and Flask and adheres to common standards for API development.
+
+## Table of Contents
+
+- [Plate Management API](#plate-management-api)
+  - [Table of Contents](#table-of-contents)
+    - [Project Overview](#project-overview)
+    - [Features](#features)
+    - [Running the Server](#running-the-server)
+    - [Example cURL Commands](#example-curl-commands)
+    - [Add a Well to a Plate:](#add-a-well-to-a-plate)
+    - [Get Plate Information:](#get-plate-information)
+    - [Authentication](#authentication)
+    - [API Endpoints](#api-endpoints)
+      - [Create a Plate](#create-a-plate)
+    - [Error Handling](#error-handling)
+      - [Example error response:](#example-error-response)
+    - [Development](#development)
+      - [Project Structure](#project-structure)
+    - [Limitations](#limitations)
+
+### Project Overview
+
+The Plate Management API is designed to help scientists manage experimental assay plates, which are rectangular grids composed of wells. Each well contains specific reagents used in experiments. The API provides operations to create plates, update wells, and retrieve information about plates and their contents.
+
+This project is part of a software engineering challenge to build a simple, useful API that interacts with biological experiment data using HTTP methods.
+
+### Features
+
+- Create a new assay plate (96 or 384 wells)
+- Update the contents of wells (cell line, chemical, and concentration)
+- Retrieve plate details, including its wells and their contents
+- Error handling for invalid operations or inputs
+
+### Running the Server
+To start the API server, run the following command:
+```bash
+python server.py
+```
+
+The server will run at ```localhost:5000``` by default.
+
+### Example cURL Commands
+Create a Plate:
+```bash
+curl -X POST http://localhost:5000/plates \
+  -H "Content-Type: application/json" \
+  -d '{"name": "exp_1", "size": 96}'
+```
+### Add a Well to a Plate:
+```bash
+curl -X POST http://localhost:5000/plates/1/wells \
+  -H "Content-Type: application/json" \
+  -d '{
+    "row": 1,
+    "col": 1,
+    "cell_line": "c47",
+    "chemical": "O123",
+    "concentration": 0.19
+  }'
+```
+### Get Plate Information:
+```bash
+curl http://localhost:5000/plates/1
+```
+### Authentication
+No authentication is required for this API.
+
+### API Endpoints
+#### Create a Plate
+
+Endpoint: ```POST /plates```
+
+Description: Creates a new assay plate.
+Request Body:
+json
+
+{
+  "name": "exp_1",
+  "size": 96
+}
+name: Name of the plate (string)
+size: Size of the plate (96 or 384 wells)
+Response:
+```json
+{
+  "id": 1,
+  "name": "exp_1",
+  "size": 96
+}
+```
+Update a Well
+
+Endpoint: ```POST /plates/{plate_id}/wells```
+
+Description: Adds or updates information for a specific well in a plate.
+Request Body:
+```json
+{
+  "row": 1,
+  "col": 1,
+  "cell_line": "c47",
+  "chemical": "O123",
+  "concentration": 0.19
+}
+```
+row: Row of the well (integer, 1-indexed)
+col: Column of the well (integer, 1-indexed)
+cell_line: (optional) Identifier for the cell line (string)
+chemical: (optional) Identifier for the chemical (string)
+concentration: (optional) Concentration of the chemical (float)
+Response:
+```json
+{
+  "message": "Well updated!"
+}
+```
+Get Plate Information
+
+Endpoint: ```GET /plates/{plate_id}```
+
+Description: Retrieves information about a specific plate, including its wells.
+Response:
+```json
+{
+  "id": 1,
+  "name": "exp_1",
+  "size": 96,
+  "plate": {
+    "1, 1": {
+      "cell_line": "c47",
+      "chemical": "O123",
+      "concentration": 0.19
+    }
+  }
+}
+```
+### Error Handling
+The API uses standard HTTP status codes to indicate the success or failure of requests:
+
+```200 OK```: Operation was successful.
+```404 Not Found```: The requested resource (plate, well) was not found.
+```400 Bad Request```: Invalid input data or parameters.
+#### Example error response:
+
+```bash
+HTTP/1.1 404 NOT FOUND
+{
+  "message": "That plate doesn't exist!"
+}
+```
+### Development
+#### Project Structure
+
+```server.py```: Main Flask application
+```classes.py```: Contains the Assay and Well classes
+```README.md```: Project documentation (this file)
+```Tutorial.md```: Additional usage examples and edge cases
+
+For more detailed examples, refer to the Tutorial.
+
+### Limitations
+* Plate sizes are restricted to 96 (12x8) or 384 (24x16) wells.
+* Well positions are 1-indexed.
+* A concentration can only be added if a chemical is present in the well.
+* The API only accepts JSON input.
 
 
-`/plates/`
-
-### Creates plates with given name and size
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/ -d '{"name":"exp_1", "size":96}'
-</pre>
-
-`/plates/<id>/wells/`
-
-### Inserts well information to specified plate
-
-### 
-Adding well to row 5, column 3 in plate 1 (exp_1)
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":5, "col":3, "cell_line":4, "chemical":"Ascorbic acid", "concentration":0.83}'
-</pre>
-
-Adding well to row 1, column 1 in plate 1 (exp_1)
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":1, "col":1, "cell_line":47, "chemical":"Arabinose", "concentration":0.19}'
-</pre>
-
-Adding well to row 12, column 8 in plate 1 (exp_1)
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":12, "col":8, "cell_line":18, "chemical":"Phenol", "concentration":0.24}'
-</pre>
-
-`/plates/id`
-
-### Checking contents of plate 1 (exp_1)
-
-<pre>
-curl -i http://127.0.0.1:5000/plates/1
-</pre>
-
-
-## Edge Cases
-
-Specified: cell_line
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":7, "col":1, "cell_line":18}'
-</pre>
-
-Specified: chemical
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":7, "col":2, "chemical":"Glucose"}'
-</pre>
-
-Specified: concentration
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":7, "col":6, "concentration":0.83}'
-</pre>
-
-Specified: cell_line, chemical
-
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":7, "col":3, "cell_line":47, "chemical":"PMSF"}'
-</pre>
-
-Specified: chemical, concentration
-
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":7, "col":4, "chemical":"DMF", "concentration":0.83}'
-</pre>
-
-Specified: cell_line, concentration
-
-
-<pre>
-curl -i -H "Content-type: application/json" \
--X POST http://127.0.0.1:5000/plates/1/wells/ -d '{"row":7, "col":5, "cell_line":47, "concentration":0.83}'
-</pre>

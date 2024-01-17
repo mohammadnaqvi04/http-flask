@@ -159,7 +159,7 @@ HTTP/1.1 404 NOT FOUND
 ```README.md```: Project documentation (this file)
 ```Tutorial.md```: Additional usage examples and edge cases
 
-For more detailed examples, refer to the Tutorial.
+For more detailed examples, refer to the [Tutorial](Tutorial.md).
 
 ### Limitations
 * Plate sizes are restricted to 96 (12x8) or 384 (24x16) wells.

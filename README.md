@@ -1,6 +1,6 @@
 # Plate Management API
 
-This API allows scientists to manage experimental assay plates, including creating plates, updating wells, and retrieving plate information. It's built using Python and Flask and adheres to common standards for API development.
+This API allows scientists to manage experimental assay plates, including creating plates, updating wells, and retrieving plate information. Built on the Flask framework and adheres to common standards for API development.
 
 ## Table of Contents
 
@@ -10,11 +10,14 @@ This API allows scientists to manage experimental assay plates, including creati
     - [Features](#features)
     - [Running the Server](#running-the-server)
     - [Example cURL Commands](#example-curl-commands)
-    - [Add a Well to a Plate:](#add-a-well-to-a-plate)
-    - [Get Plate Information:](#get-plate-information)
+      - [Create a Plate:](#create-a-plate)
+      - [Add a Well to a Plate:](#add-a-well-to-a-plate)
+      - [Get Plate Information:](#get-plate-information)
     - [Authentication](#authentication)
     - [API Endpoints](#api-endpoints)
-      - [Create a Plate](#create-a-plate)
+      - [Create a Plate](#create-a-plate-1)
+      - [Update a Well](#update-a-well)
+      - [Get Plate Information](#get-plate-information-1)
     - [Error Handling](#error-handling)
       - [Example error response:](#example-error-response)
     - [Development](#development)
@@ -24,8 +27,6 @@ This API allows scientists to manage experimental assay plates, including creati
 ### Project Overview
 
 The Plate Management API is designed to help scientists manage experimental assay plates, which are rectangular grids composed of wells. Each well contains specific reagents used in experiments. The API provides operations to create plates, update wells, and retrieve information about plates and their contents.
-
-This project is part of a software engineering challenge to build a simple, useful API that interacts with biological experiment data using HTTP methods.
 
 ### Features
 
@@ -43,13 +44,13 @@ python server.py
 The server will run at ```localhost:5000``` by default.
 
 ### Example cURL Commands
-Create a Plate:
+#### Create a Plate:
 ```bash
 curl -X POST http://localhost:5000/plates \
   -H "Content-Type: application/json" \
   -d '{"name": "exp_1", "size": 96}'
 ```
-### Add a Well to a Plate:
+#### Add a Well to a Plate:
 ```bash
 curl -X POST http://localhost:5000/plates/1/wells \
   -H "Content-Type: application/json" \
@@ -61,7 +62,7 @@ curl -X POST http://localhost:5000/plates/1/wells \
     "concentration": 0.19
   }'
 ```
-### Get Plate Information:
+#### Get Plate Information:
 ```bash
 curl http://localhost:5000/plates/1
 ```
@@ -91,7 +92,7 @@ Response:
   "size": 96
 }
 ```
-Update a Well
+#### Update a Well
 
 Endpoint: ```POST /plates/{plate_id}/wells```
 
@@ -106,18 +107,14 @@ Request Body:
   "concentration": 0.19
 }
 ```
-row: Row of the well (integer, 1-indexed)
-col: Column of the well (integer, 1-indexed)
-cell_line: (optional) Identifier for the cell line (string)
-chemical: (optional) Identifier for the chemical (string)
-concentration: (optional) Concentration of the chemical (float)
+
 Response:
 ```json
 {
   "message": "Well updated!"
 }
 ```
-Get Plate Information
+#### Get Plate Information
 
 Endpoint: ```GET /plates/{plate_id}```
 
@@ -141,7 +138,9 @@ Response:
 The API uses standard HTTP status codes to indicate the success or failure of requests:
 
 ```200 OK```: Operation was successful.
+
 ```404 Not Found```: The requested resource (plate, well) was not found.
+
 ```400 Bad Request```: Invalid input data or parameters.
 #### Example error response:
 

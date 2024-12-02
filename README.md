@@ -153,10 +153,9 @@ HTTP/1.1 404 NOT FOUND
 ### Development
 #### Project Structure
 
-```server.py```: Main Flask application
-```classes.py```: Contains the Assay and Well classes
-```README.md```: Project documentation (this file)
-```Tutorial.md```: Additional usage examples and edge cases
+* ```server.py```: Main Flask application
+* ```classes.py```: Contains the Assay and Well classes
+* ```Tutorial.md```: Additional usage examples and edge cases
 
 For more detailed examples, refer to the [Tutorial](Tutorial.md).
 
